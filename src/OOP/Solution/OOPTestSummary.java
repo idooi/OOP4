@@ -2,35 +2,34 @@ package OOP.Solution;
 
 import OOP.Provided.OOPResult;
 import OOP.Provided.OOPResult.OOPTestResult;
+
 import java.util.Map;
 
 public class OOPTestSummary {
-    private Map<String, OOPResult>testMap;
 
-    public OOPTestSummary (Map<String, OOPResult> testMap){
+    private Map<String, OOPResult> testMap;
+
+    public OOPTestSummary(Map<String, OOPResult> testMap) {
         this.testMap = testMap;
     }
 
-    public int getNum(OOPTestResult resType){
-        int count = 0;
-        for (Map.Entry<String, OOPResult> test: this.testMap.entrySet()){
-            if (test.getValue().getResultType().equals(resType)){
-                count++;
-            }
-        }
-        return count;
+    private int getNum(OOPTestResult resType) {
+        return (int) this.testMap.values().stream().filter(res -> res.getResultType().equals(resType)).count();
     }
 
-    public int getNumSuccesses(){
+    public int getNumSuccesses() {
         return getNum(OOPTestResult.SUCCESS);
     }
-    public int getNumFailures(){
+
+    public int getNumFailures() {
         return getNum(OOPTestResult.FAILURE);
     }
-    public int getNumExceptionMismatches(){
+
+    public int getNumExceptionMismatches() {
         return getNum(OOPTestResult.EXPECTED_EXCEPTION_MISMATCH);
     }
-    public int getNumErrors(){
+
+    public int getNumErrors() {
         return getNum(OOPTestResult.ERROR);
     }
 }

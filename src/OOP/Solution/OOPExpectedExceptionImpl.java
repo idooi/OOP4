@@ -2,17 +2,18 @@ package OOP.Solution;
 
 import OOP.Provided.OOPExpectedException;
 
-import java.lang.reflect.Constructor;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class OOPExpectedExceptionImpl implements  OOPExpectedException{
-    private Class  exp;
+public class OOPExpectedExceptionImpl implements OOPExpectedException {
+
+    private Class exp;
     private LinkedList<String> subMsgs = new LinkedList<String>();
 
     /**
      * @return the expected exception type.
      */
-    public Class getExpectedException(){
+    public Class getExpectedException() {
         return this.exp;
     }
 
@@ -22,7 +23,7 @@ public class OOPExpectedExceptionImpl implements  OOPExpectedException{
      * @param expected - the expected exception type.
      * @return this object.
      */
-    public OOPExpectedException expect(Class expected){
+    public OOPExpectedException expect(Class<? extends Exception> expected) {
         this.exp = expected;
         return this;
     }
@@ -38,7 +39,7 @@ public class OOPExpectedExceptionImpl implements  OOPExpectedException{
      * @param msg - the expected message.
      * @return this object.
      */
-    public OOPExpectedException expectMessage(String msg){
+    public OOPExpectedException expectMessage(String msg) {
         this.subMsgs.add(msg);
         return this;
     }
@@ -53,19 +54,15 @@ public class OOPExpectedExceptionImpl implements  OOPExpectedException{
      * @param e - the exception that was thrown.
      * @return whether or not the actual exception was as expected.
      */
-    public boolean assertExpected(Exception e){
+    public boolean assertExpected(Exception e) {
         Class<? extends Exception> eClass = e.getClass();
         if (!this.exp.isAssignableFrom(eClass)) {
             return false;
         }
-        for (String msg: this.subMsgs){
-            if (msg.contains(e.getMessage())){
-                return true;
-            }
-        }
-        return false;
+        AtomicBoolean contained = new AtomicBoolean(false);
+        this.subMsgs.forEach(msg -> contained.set(contained.get() || msg.contains(e.getMessage())));
+        return contained.get();
     }
-
 
     /**
      * @return an instance of an ExpectedException with no exception or expected messages.
@@ -75,8 +72,8 @@ public class OOPExpectedExceptionImpl implements  OOPExpectedException{
      * If this is the state of the ExpectedException object, then no exception is expected to be thrown.
      * So, if an exception is thrown, an OOPResult with ERROR should be returned
      */
-    static OOPExpectedException none() {
-        return new OOPExpectedException();?????
+    public static OOPExpectedException none() {
+        return new OOPExpectedExceptionImpl();
     }
 
 }
