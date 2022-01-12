@@ -1,104 +1,18 @@
 package OOP.Tests;
 
-import OOP.Provided.OOPAssertionFailure;
-import OOP.Provided.OOPExpectedException;
-import OOP.Solution.*;
 import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import OOP.Solution.OOPTest;
+import OOP.Solution.OOPTestSummary;
+import OOP.Solution.OOPUnitCore;
 
-
-
-
-public class ExampleTest {
-
-    @Test
-    public void testForExample() {
-
-        OOPTestSummary result = OOPUnitCore.runClass(ExampleClass.class);
-        assertNotNull(result);
-        assertEquals(2, result.getNumSuccesses());
-        assertEquals(1, result.getNumFailures());
-        assertEquals(0, result.getNumErrors());
-        assertEquals(0, result.getNumExceptionMismatches());
-
-
-    }
-
-    static
-    @OOPTestClass(OOPTestClass.OOPTestClassType.ORDERED)
-    public class ExampleClass {
-
-        @OOPExceptionRule
-        private OOPExpectedException expected = OOPExpectedExceptionImpl.none();
-
-        private int field = 0;
-
-        @OOPBefore({"test1"})
-        public void beforeFirstTest() {
-            this.field = 123;
-        }
-
-
-        // Should be successful
-        @OOPTest(order = 1)
-        public void test1() throws OOPAssertionFailure {
-            //this must run before the other test. must not throw an exception to succeed
-            OOPUnitCore.assertEquals(123, this.field);
-        }
-
-        // Should fail
-        @OOPTest(order = 2)
-        public void test2() throws OOPAssertionFailure {
-            OOPUnitCore.assertEquals(321, this.field);
-        }
-
-        // Should be successful
-        @OOPTest(order = 3)
-        public void testThrows() throws Exception {
-            expected.expect(Exception.class)
-                    .expectMessage("rror messag");
-            throw new Exception("error message");
-        }
-        protected void assertTarget(Class<?> c, ElementType expected) {
-            ElementType[] values = c.getAnnotation(Target.class).value();
-            Assert.assertEquals(1, values.length);
-            Assert.assertEquals(expected, values[0]);
-        }
-
-        protected void assertTargetType(Class<?> c) {
-            assertTarget(c, ElementType.TYPE);
-        }
-
-        protected void assertTargetMethod(Class<?> c) {
-            assertTarget(c, ElementType.METHOD);
-        }
-
-        protected void assertTargetField(Class<?> c) {
-            assertTarget(c, ElementType.FIELD);
-        }
-
-        protected void assertRetention(Class<?> c, RetentionPolicy expected) {
-            RetentionPolicy actual = c.getAnnotation(Retention.class).value();
-            Assert.assertEquals(expected, actual);
-        }
-
-        protected void assertRetentionRuntime(Class<?> c) {
-            assertRetention(c, RetentionPolicy.RUNTIME);
-        }
-    }
+public class BaseTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -219,4 +133,3 @@ public class ExampleTest {
                 0);
     }
 }
-

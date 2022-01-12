@@ -8,6 +8,12 @@ import OOP.Provided.OOPResult;
 public class OOPResultImpl implements OOPResult {
 
     private OOPTestResult resultType;
+    private String resultMessage;
+
+    public OOPResultImpl(OOPTestResult resultType, String resultMessage) {
+        this.resultType = resultType;
+        this.resultMessage = resultMessage;
+    }
 
     /**
      * @return the result type, which is one of four possible type. See OOPTestResult.
@@ -20,7 +26,7 @@ public class OOPResultImpl implements OOPResult {
      * @return the message of the result in case of an error.
      */
     public String getMessage() {
-
+        return resultMessage;
     }
 
     /**
@@ -34,6 +40,7 @@ public class OOPResultImpl implements OOPResult {
             return false;
         }
         OOPResultImpl res = (OOPResultImpl) obj;
-        return res.getMessage().equals(this.getMessage()) && res.getResultType().equals(this.getResultType());
+        return ((this.getMessage() == null && res.getMessage() == null) ||this.getMessage().equals(res.getMessage()))
+            && ((this.getResultType() == null && res.getResultType() == null) ||this.getResultType().equals(res.getResultType()));
     }
 }

@@ -55,12 +55,20 @@ public class OOPExpectedExceptionImpl implements OOPExpectedException {
      * @return whether or not the actual exception was as expected.
      */
     public boolean assertExpected(Exception e) {
+        if(this.exp == null){
+            return e == null;
+        } else {
+            if(e == null) return false;
+        }
         Class<? extends Exception> eClass = e.getClass();
         if (!this.exp.isAssignableFrom(eClass)) {
             return false;
         }
         AtomicBoolean contained = new AtomicBoolean(false);
-        this.subMsgs.forEach(msg -> contained.set(contained.get() || msg.contains(e.getMessage())));
+        for(String msg: this.subMsgs) {
+            contained.set(
+                contained.get() || (e.getMessage() != null && msg.contains(e.getMessage())));
+        }
         return contained.get();
     }
 
