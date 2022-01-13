@@ -60,7 +60,7 @@ public class Cases {
 
         @OOPTest(order = 1)
         public void test1() {
-            OOPUnitCore.assertEquals(this.s, afterSetUp);
+            OOPUnitCore.assertEquals(afterSetUp, this.s);
         }
 
         static String before = "before";

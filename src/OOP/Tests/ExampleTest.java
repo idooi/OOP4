@@ -69,7 +69,7 @@ public class ExampleTest {
         @OOPTest(order = 3)
         public void testThrows() throws Exception {
             expected.expect(Exception.class)
-                    .expectMessage("rror messag");
+                    .expectMessage("error message");
             throw new Exception("error message");
         }
         protected void assertTarget(Class<?> c, ElementType expected) {

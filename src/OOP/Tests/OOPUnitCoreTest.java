@@ -14,8 +14,7 @@ import OOP.Solution.OOPTest;
 import OOP.Solution.OOPTestClass;
 import OOP.Solution.OOPUnitCore;
 
-public class OOPUnitCoreTest
-        extends BaseTest {
+public class OOPUnitCoreTest extends BaseTest {
 
     @Test
     public void assertEquals_numbers_success() {
@@ -402,8 +401,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class SetupInheritanceTest2
-            extends SetupInheritanceTest1 {
+    public static class SetupInheritanceTest2 extends SetupInheritanceTest1 {
 
         @OOPSetup
         public void setUpTest2() {
@@ -412,8 +410,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class SetupInheritanceTest3
-            extends SetupInheritanceTest2 {
+    public static class SetupInheritanceTest3 extends SetupInheritanceTest2 {
 
         @OOPSetup
         public void setUpTest3() {
@@ -438,8 +435,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class SetupInheritanceOrderTest2
-            extends SetupInheritanceOrderTest1 {
+    public static class SetupInheritanceOrderTest2 extends SetupInheritanceOrderTest1 {
 
         @OOPSetup
         public void setUpTest2() {
@@ -448,8 +444,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class SetupInheritanceOrderTest3
-            extends SetupInheritanceOrderTest2 {
+    public static class SetupInheritanceOrderTest3 extends SetupInheritanceOrderTest2 {
 
         @OOPSetup
         public void setUpTest3() {
@@ -474,8 +469,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class SetupOverrideTest2
-            extends SetupOverrideTest1 {
+    public static class SetupOverrideTest2 extends SetupOverrideTest1 {
 
         @OOPSetup
         public void setUpTest2() {
@@ -484,8 +478,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class SetupOverrideTest3
-            extends SetupOverrideTest2 {
+    public static class SetupOverrideTest3 extends SetupOverrideTest2 {
 
         @OOPSetup
         @Override
@@ -495,8 +488,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class SetupOverrideTest4
-            extends SetupOverrideTest3 {
+    public static class SetupOverrideTest4 extends SetupOverrideTest3 {
 
         @OOPSetup
         @Override
@@ -585,8 +577,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class BeforeInheritanceTest2
-            extends BeforeInheritanceTest1 {
+    public static class BeforeInheritanceTest2 extends BeforeInheritanceTest1 {
 
         @OOPBefore("testCalled")
         public void beforeTest2() {
@@ -595,8 +586,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class BeforeInheritanceTest3
-            extends BeforeInheritanceTest2 {
+    public static class BeforeInheritanceTest3 extends BeforeInheritanceTest2 {
 
         @OOPBefore("testCalled")
         public void beforeTest3() {
@@ -621,8 +611,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class BeforeInheritanceOrderTest2
-            extends BeforeInheritanceOrderTest1 {
+    public static class BeforeInheritanceOrderTest2 extends BeforeInheritanceOrderTest1 {
 
         @OOPBefore("testCalled")
         public void beforeTest2() {
@@ -631,8 +620,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class BeforeInheritanceOrderTest3
-            extends BeforeInheritanceOrderTest2 {
+    public static class BeforeInheritanceOrderTest3 extends BeforeInheritanceOrderTest2 {
 
         @OOPBefore("testCalled")
         public void beforeTest3() {
@@ -657,8 +645,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class BeforeOverrideTest2
-            extends BeforeOverrideTest1 {
+    public static class BeforeOverrideTest2 extends BeforeOverrideTest1 {
 
         @OOPBefore("testCalled")
         public void beforeTest2() {
@@ -667,8 +654,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class BeforeOverrideTest3
-            extends BeforeOverrideTest2 {
+    public static class BeforeOverrideTest3 extends BeforeOverrideTest2 {
 
         @OOPBefore("testCalled")
         @Override
@@ -814,8 +800,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class AfterInheritanceTest2
-            extends AfterInheritanceTest1 {
+    public static class AfterInheritanceTest2 extends AfterInheritanceTest1 {
 
         @OOPAfter("testCalled")
         public void afterTest2() {
@@ -824,8 +809,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass(OOPTestClass.OOPTestClassType.ORDERED)
-    public static class AfterInheritanceTest3
-            extends AfterInheritanceTest2 {
+    public static class AfterInheritanceTest3 extends AfterInheritanceTest2 {
 
         @OOPAfter("testCalled")
         public void afterTest3() {
@@ -855,8 +839,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class AfterInheritanceOrderTest2
-            extends AfterInheritanceOrderTest1 {
+    public static class AfterInheritanceOrderTest2 extends AfterInheritanceOrderTest1 {
 
         @OOPAfter("testCalled")
         public void afterTest2() {
@@ -865,8 +848,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass(OOPTestClass.OOPTestClassType.ORDERED)
-    public static class AfterInheritanceOrderTest3
-            extends AfterInheritanceOrderTest2 {
+    public static class AfterInheritanceOrderTest3 extends AfterInheritanceOrderTest2 {
 
         @OOPAfter("testCalled")
         public void afterTest3() {
@@ -896,8 +878,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class AfterOverrideTest2
-            extends AfterOverrideTest1 {
+    public static class AfterOverrideTest2 extends AfterOverrideTest1 {
 
         @OOPAfter("testCalled")
         public void afterTest2() {
@@ -906,8 +887,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass(OOPTestClass.OOPTestClassType.ORDERED)
-    public static class AfterOverrideTest3
-            extends AfterOverrideTest2 {
+    public static class AfterOverrideTest3 extends AfterOverrideTest2 {
 
         @OOPAfter("testCalled")
         @Override
@@ -1098,8 +1078,7 @@ public class OOPUnitCoreTest
 
         @OOPTest
         public void test() {
-            expectedException.expect(IllegalArgumentException.class)
-                    .expectMessage("error");
+            expectedException.expect(IllegalArgumentException.class).expectMessage("error");
             throw new IllegalArgumentException("error");
         }
     }
@@ -1113,8 +1092,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class TypesSuccessInheritanceTest2
-            extends TypesSuccessInheritanceTest1 {
+    public static class TypesSuccessInheritanceTest2 extends TypesSuccessInheritanceTest1 {
 
         @OOPTest
         public void test2() {
@@ -1122,8 +1100,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class TypesSuccessInheritanceTest3
-            extends TypesSuccessInheritanceTest2 {
+    public static class TypesSuccessInheritanceTest3 extends TypesSuccessInheritanceTest2 {
 
         @OOPTest
         public void test3() {
@@ -1147,8 +1124,7 @@ public class OOPUnitCoreTest
 
         @OOPTest
         public void test() {
-            expectedException.expect(IllegalArgumentException.class)
-                    .expectMessage("error");
+            expectedException.expect(IllegalArgumentException.class).expectMessage("error");
             throw new ArithmeticException("error");
         }
     }
@@ -1161,8 +1137,7 @@ public class OOPUnitCoreTest
 
         @OOPTest
         public void test() {
-            expectedException.expect(IllegalArgumentException.class)
-                    .expectMessage("error");
+            expectedException.expect(IllegalArgumentException.class).expectMessage("error");
             throw new IllegalArgumentException("different message");
         }
     }
@@ -1237,8 +1212,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass(OOPTestClass.OOPTestClassType.ORDERED)
-    public static class OrderedInheritanceAlsoOrderedTest2
-            extends OrderedInheritanceAlsoOrderedTest1 {
+    public static class OrderedInheritanceAlsoOrderedTest2 extends OrderedInheritanceAlsoOrderedTest1 {
 
         @OOPTest(order = 6)
         public void test2Method1() {
@@ -1260,8 +1234,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass(OOPTestClass.OOPTestClassType.ORDERED)
-    public static class OrderedInheritanceAlsoOrderedTest3
-            extends OrderedInheritanceAlsoOrderedTest2 {
+    public static class OrderedInheritanceAlsoOrderedTest3 extends OrderedInheritanceAlsoOrderedTest2 {
 
         @OOPTest(order = 3)
         public void test3Method1() {
@@ -1288,43 +1261,42 @@ public class OOPUnitCoreTest
         protected int called;
 
         @OOPTest(order = 6)
-        public void test1Method1() {
+        public void test1Method1_order6() {
             called++;
             OOPUnitCore.assertEquals(6 + 3, called);
         }
 
         @OOPTest(order = 2)
-        public void test1Method2() {
+        public void test1Method2_order2() {
             called++;
             OOPUnitCore.assertEquals(2 + 3, called);
         }
 
         @OOPTest(order = 1)
-        public void test1Method3() {
+        public void test1Method3_order1() {
             called++;
             OOPUnitCore.assertEquals(1 + 3, called);
         }
     }
 
-    public static class OrderedInheritanceNotOrderedTest2
-            extends OrderedInheritanceNotOrderedTest1 {
+    public static class OrderedInheritanceNotOrderedTest2 extends OrderedInheritanceNotOrderedTest1 {
 
         @OOPTest
-        public void test2Method1() {
+        public void test2Method1_noorder() {
             called++;
             boolean rightRange = called >= 1 && called <= 3;
             OOPUnitCore.assertEquals(true, rightRange);
         }
 
         @OOPTest
-        public void test2Method2() {
+        public void test2Method2_noorder() {
             called++;
             boolean rightRange = called >= 1 && called <= 3;
             OOPUnitCore.assertEquals(true, rightRange);
         }
 
         @OOPTest
-        public void test2Method3() {
+        public void test2Method3_noorder() {
             called++;
             boolean rightRange = called >= 1 && called <= 3;
             OOPUnitCore.assertEquals(true, rightRange);
@@ -1332,23 +1304,22 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass(OOPTestClass.OOPTestClassType.ORDERED)
-    public static class OrderedInheritanceNotOrderedTest3
-            extends OrderedInheritanceNotOrderedTest2 {
+    public static class OrderedInheritanceNotOrderedTest3 extends OrderedInheritanceNotOrderedTest2 {
 
         @OOPTest(order = 5)
-        public void test3Method1() {
+        public void test3Method1_order5() {
             called++;
             OOPUnitCore.assertEquals(5 + 3, called);
         }
 
         @OOPTest(order = 4)
-        public void test3Method2() {
+        public void test3Method2_order4() {
             called++;
             OOPUnitCore.assertEquals(4 + 3, called);
         }
 
         @OOPTest(order = 3)
-        public void test3Method3() {
+        public void test3Method3_order3() {
             called++;
             OOPUnitCore.assertEquals(3 + 3, called);
         }
@@ -1384,8 +1355,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class TagNotTaggedNotCalledTest2
-            extends TagNotTaggedNotCalledTest1 {
+    public static class TagNotTaggedNotCalledTest2 extends TagNotTaggedNotCalledTest1 {
 
         @OOPExceptionRule
         OOPExpectedException expectedException = OOPExpectedException.none();
@@ -1415,8 +1385,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class TagRunAllIgnoreTagsTest2
-            extends TagRunAllIgnoreTagsTest1 {
+    public static class TagRunAllIgnoreTagsTest2 extends TagRunAllIgnoreTagsTest1 {
 
         @OOPTest(tag = "tag2")
         public void test2Method1() {
@@ -1428,8 +1397,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class TagRunAllIgnoreTagsTest3
-            extends TagRunAllIgnoreTagsTest2 {
+    public static class TagRunAllIgnoreTagsTest3 extends TagRunAllIgnoreTagsTest2 {
 
         @OOPTest(tag = "tag2")
         public void test3Method1() {
@@ -1459,8 +1427,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass
-    public static class OrderAndTagTest2
-            extends OrderAndTagTest1 {
+    public static class OrderAndTagTest2 extends OrderAndTagTest1 {
 
         @OOPTest(tag = "tag2", order = 1)
         public void test2Method1() {
@@ -1476,8 +1443,7 @@ public class OOPUnitCoreTest
     }
 
     @OOPTestClass(OOPTestClass.OOPTestClassType.ORDERED)
-    public static class OrderAndTagTest3
-            extends OrderAndTagTest2 {
+    public static class OrderAndTagTest3 extends OrderAndTagTest2 {
 
         @OOPTest(tag = "tag2", order = 3)
         public void test3Method1() {

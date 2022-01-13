@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 public class OOPUnitCore {
 
     public static void assertEquals(Object expected, Object actual) throws OOPAssertionFailure {
-        if(expected == null){
-            if(actual == null){
+        if (expected == null) {
+            if (actual == null) {
                 return;
             } else {
                 throw new OOPAssertionFailure(expected, actual);
@@ -47,7 +47,7 @@ public class OOPUnitCore {
     }
 
     public static OOPTestSummary runClass(Class<?> testClass, String tag) {
-        if (testClass == null) {
+        if (testClass == null || tag == null) {
             throw new IllegalArgumentException();
         }
         OOPTestClass testClassAnnotation = testClass.getAnnotation(OOPTestClass.class);
@@ -55,8 +55,10 @@ public class OOPUnitCore {
             throw new IllegalArgumentException();
         }
         Constructor<?> ctor = null;
+        boolean access = false;
         try {
             ctor = testClass.getDeclaredConstructor();
+            access = ctor.isAccessible();
             ctor.setAccessible(true);
         } catch (NoSuchMethodException ignored) {
         }
@@ -70,47 +72,51 @@ public class OOPUnitCore {
         }
         Map<String, OOPResult> summary = new HashMap<>();
 
-        // testClass, parent of testClass, parent of parent of testClass...
-        List<Class<?>> allClasses = getSuperClassList(testClass);
-
-        runSetupMethods(allClasses, instance);
-        runTestsRecursize(allClasses, instance, tag, summary);
-
+        runSetupMethods(instance);
+        runTests(instance, tag, summary);
+        ctor.setAccessible(access);
         return new OOPTestSummary(summary);
     }
 
-    private static void runTestsRecursize(List<Class<?>> allClasses, Object instance, String tag,
-        Map<String, OOPResult> summary) {
-        if (allClasses.size() == 0) {
+    private static void runTests(Object instance, String tag, Map<String, OOPResult> summary) {
+        if (instance == null) {
             return;
         }
-        Collections.reverse(allClasses);
-        for (Class<?> c : allClasses) {
-            runTests(c, instance, tag, summary);
-        }
-    }
-
-    private static void runTests(Class<?> testClass, Object instance, String tag, Map<String, OOPResult> summary) {
-        List<Method> testMethods = getMethodList(instance.getClass(), OOPTest.class, tag);
-        OOPTestClass oopTestClass = testClass.getAnnotation(OOPTestClass.class);
-        if (oopTestClass == null) {
-            return;
-        }
-        if (oopTestClass.value() == OOPTestClass.OOPTestClassType.ORDERED) {
-            List<Method> sorted = testMethods.stream().sorted((test1, test2) -> {
-                OOPTest oopTest1 = test1.getAnnotation(OOPTest.class);
-                OOPTest oopTest2 = test2.getAnnotation(OOPTest.class);
-                return oopTest1.order() - oopTest2.order();
-            }).collect(Collectors.toList());
-            for (Method test : sorted) {
-                runTest(test, testClass, instance, summary);
+        Class<?> testClass = instance.getClass();
+        List<Method> testMethods = getMethodList(testClass, OOPTest.class, tag);
+        testMethods.sort((t1, t2) -> {
+            OOPTestClass oopTestClass1 = t1.getDeclaringClass().getAnnotation(OOPTestClass.class);
+            OOPTestClass oopTestClass2 = t2.getDeclaringClass().getAnnotation(OOPTestClass.class);
+            if(oopTestClass1 == null && oopTestClass2 == null) {
+                return 0;
             }
-        } else { //UNORDERED
-            for (Method test : testMethods) {
-                runTest(test, testClass, instance, summary);
+            if(oopTestClass1 == null) {
+                return -1;
             }
+            if(oopTestClass2 == null) {
+                return 1;
+            }
+            if (oopTestClass1.value() == oopTestClass2.value()) {
+                return 0;
+            }
+            if (oopTestClass1.value() == OOPTestClass.OOPTestClassType.ORDERED
+                && oopTestClass2.value() == OOPTestClass.OOPTestClassType.UNORDERED) {
+                return -1;
+            }
+            if (oopTestClass1.value() == OOPTestClass.OOPTestClassType.UNORDERED
+                && oopTestClass2.value() == OOPTestClass.OOPTestClassType.ORDERED) {
+                return 1;
+            }
+            return 0;
+        });
+        testMethods.sort((test1, test2) -> {
+            OOPTest oopTest1 = test1.getAnnotation(OOPTest.class);
+            OOPTest oopTest2 = test2.getAnnotation(OOPTest.class);
+            return oopTest1.order() - oopTest2.order();
+        });
+        for (Method test : testMethods) {
+            runTest(test, testClass, instance, summary);
         }
-
     }
 
     private static void runTest(Method test, Class<?> testClass, Object instance, Map<String, OOPResult> summary) {
@@ -124,36 +130,34 @@ public class OOPUnitCore {
                 e.printStackTrace();
             }
         }
-        List<Class<?>> allClasses = getSuperClassList(testClass);
-        List<Class<?>> allClassesReversed = allClasses;
-        Collections.reverse(allClassesReversed);
+
         AtomicReference<Object> backup = new AtomicReference<>(backUp(instance));
-        for (Class<?> c : allClassesReversed) {
-            List<Method> beforeMethods = getMethodList(c, OOPBefore.class, test.getName());
-            for (Method method : beforeMethods) {
-                try {
-                    backup.set(backUp(instance));
-                    method.setAccessible(true);
-                    method.invoke(instance);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    restore(instance, backup);
-                    summary.put(method.getName(), new OOPResultImpl(OOPResult.OOPTestResult.ERROR, e.getMessage()));
-                }
+        List<Method> beforeMethods = getMethodList(testClass, OOPBefore.class, test.getName());
+        for (Method method : beforeMethods) {
+            try {
+                backup.set(backUp(instance));
+                runFunction(instance, method);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                restore(instance, backup.get());
+                summary.put(test.getName(), new OOPResultImpl(OOPResult.OOPTestResult.ERROR, e.getMessage()));
+                return;
             }
         }
         try {
-            test.setAccessible(true);
-            test.invoke(instance);
-
+            runFunction(instance, test);
+            boolean summarySet = false;
             if (expectedExceptionField != null) {
                 OOPExpectedException exceptionWrapper = (OOPExpectedException) expectedExceptionField.get(instance);
                 if (exceptionWrapper.getExpectedException() != null) {
-                    summary.put(test.getName(),
-                        new OOPResultImpl(OOPResult.OOPTestResult.ERROR, exceptionWrapper.getClass().toString()));
-                    //                    continue;
+                    summary.put(test.getName(), new OOPResultImpl(OOPResult.OOPTestResult.ERROR,
+                        exceptionWrapper.getExpectedException().toString()));
+                    summarySet = true;
                 }
             }
-            summary.put(test.getName(), new OOPResultImpl(OOPResult.OOPTestResult.SUCCESS, null));
+            if (!summarySet) {
+                summary.put(test.getName(), new OOPResultImpl(OOPResult.OOPTestResult.SUCCESS, null));
+            }
+
         } catch (IllegalAccessException | InvocationTargetException e) {
             try {
                 throw e.getCause();
@@ -167,7 +171,7 @@ public class OOPUnitCore {
                     //get the expected exception field value
                     OOPExpectedException exceptionWrapper = null;
                     try {
-                        if(expectedExceptionField != null){
+                        if (expectedExceptionField != null) {
                             exceptionWrapper = (OOPExpectedException) expectedExceptionField.get(instance);
                         } else {
                             summary.put(test.getName(),
@@ -205,27 +209,36 @@ public class OOPUnitCore {
                 throwable.printStackTrace();
             }
         }
-        for (Class<?> c : allClasses) {
-            List<Method> afterMethods = getMethodList(c, OOPAfter.class, test.getName());
-            for (Method method : afterMethods) {
-                try {
-                    backup.set(backUp(instance));
-                    method.setAccessible(true);
-                    method.invoke(instance);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    restore(instance, backup);
-                    summary.put(method.getName(), new OOPResultImpl(OOPResult.OOPTestResult.ERROR, e.getMessage()));
-                }
+
+        List<Method> afterMethods = getMethodList(testClass, OOPAfter.class, test.getName());
+        for (Method method : afterMethods) {
+            try {
+                backup.set(backUp(instance));
+                runFunction(instance, method);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                restore(instance, backup.get());
+                summary.replace(test.getName(), new OOPResultImpl(OOPResult.OOPTestResult.ERROR, e.getMessage()));
             }
         }
+
+    }
+
+    private static void runFunction(Object instance, Method method)
+        throws IllegalAccessException, InvocationTargetException {
+        boolean access = method.isAccessible();
+        method.setAccessible(true);
+        method.invoke(instance);
+        method.setAccessible(access);
     }
 
     private static void restore(Object destination, Object source) {
         try {
             Field[] fields = destination.getClass().getDeclaredFields();
             for (Field f : fields) {
+                boolean access = f.isAccessible();
                 f.setAccessible(true);
                 f.set(destination, f.get(source));
+                f.setAccessible(access);
             }
         } catch (Exception ignored) {
         }
@@ -246,37 +259,82 @@ public class OOPUnitCore {
     }
 
     private static void copyField(Field f, Object output, Object input) throws IllegalAccessException {
+        boolean access = f.isAccessible();
         f.setAccessible(true);
         Object value = f.get(input);
         try {
             Method clone = value.getClass().getDeclaredMethod("clone");
+            boolean cloneAccess = clone.isAccessible();
             clone.setAccessible(true);
             f.set(output, clone.invoke(value));
+            clone.setAccessible(cloneAccess);
         } catch (Exception canNotClone) {
             try {
                 Constructor<?> constructorMethod = value.getClass().getDeclaredConstructor(f.getType());
+                boolean ctorAccess = constructorMethod.isAccessible();
                 constructorMethod.setAccessible(true);
+                constructorMethod.setAccessible(ctorAccess);
                 f.set(output, constructorMethod.newInstance(value));
             } catch (Exception canNotConstruct) {
                 f.set(output, value);
             }
         }
+        f.setAccessible(access);
     }
 
-    private static void runSetupMethods(List<Class<?>> allClasses, Object instance) {
-        Collections.reverse(allClasses);
-        for (Class<?> c : allClasses) {
-            List<Method> setupMethods = getMethodList(c, OOPSetup.class);
-            for (Method setup : setupMethods) {
-                assertTrue(setup.getParameterTypes().length == 0);
-                try {
-                    setup.setAccessible(true);
-                    setup.invoke(instance);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+    private static void runSetupMethods(Object instance) {
+        if(instance == null) return;
+        List<Method> setupMethods = getMethodList(instance.getClass(), OOPSetup.class);
+        if (setupMethods.size() >= 1) {
+            SortByClassHiearchy(setupMethods);
+        } else {
+            return;
+        }
+        for (Method setup : setupMethods) {
+            assertTrue(setup.getParameterTypes().length == 0);
+            try {
+                runFunction(instance, setup);
+
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+
             }
         }
+    }
+
+    private static List<Method> getMethodIfExistsInSuperclass(Method setup) {
+        Class<?> subClass = setup.getDeclaringClass();
+        Class<?> superClass = subClass.getSuperclass();
+        List<Method> methods = new LinkedList<Method>();
+        while (superClass != null && superClass != Object.class) {
+            try {
+                Method temp = superClass.getDeclaredMethod(setup.getName());
+                if (temp.isAnnotationPresent(OOPSetup.class)) {
+                    methods.add(temp);
+                }
+            } catch (NoSuchMethodException ignore) {
+            }
+            superClass = superClass.getSuperclass();
+        }
+        Collections.reverse(methods);
+        return methods;
+    }
+
+    private static void SortByClassHiearchy(List<Method> setupMethods) {
+        setupMethods.sort((s1, s2) -> {
+            Class<?> s1Class = s1.getDeclaringClass();
+            Class<?> s2Class = s2.getDeclaringClass();
+            if (s1Class.equals(s2Class)) {
+                return 0;
+            }
+            if (s1Class.isAssignableFrom(s2Class)) {
+                return -1;
+            } else if (s2Class.isAssignableFrom(s1Class)) {
+                return 1;
+            }
+            // no hierarchy
+            return 0;
+        });
     }
 
     public static Field findFields(Class<?> c, Class<? extends Annotation> ann) {
@@ -295,11 +353,11 @@ public class OOPUnitCore {
         assert c == OOPBefore.class || c == OOPAfter.class || c == OOPTest.class;
         List<Method> methods = new LinkedList<Method>(Arrays.asList(testClass.getMethods()));
         List<Method> out = new LinkedList<Method>();
-        for(Method m: methods) {
+        for (Method m : methods) {
             if (c == OOPTest.class) {
 
                 OOPTest ann = (OOPTest) m.getAnnotation(c);
-                if (ann != null && (tag == null || ann.tag().equals(tag))) {
+                if (ann != null && (tag.equals("") || ann.tag().equals(tag))) {
                     out.add(m);
                     continue;
                 } else {
@@ -320,6 +378,10 @@ public class OOPUnitCore {
                 out.add(m);
             }
         }
+        SortByClassHiearchy(out);
+        if (c == OOPAfter.class) {
+            Collections.reverse(out);
+        }
         return out;
     }
 
@@ -327,23 +389,8 @@ public class OOPUnitCore {
         return Arrays.stream(testClass.getMethods()).filter(m -> m.isAnnotationPresent(c)).collect(Collectors.toList());
     }
 
-    /**
-     * Returns a List of super classes sorted from the class itself to the first ancestor (direct parent) to the last one
-     */
-    private static List<Class<?>> getSuperClassList(Class<?> subclass) {
-        LinkedList<Class<?>> superClasses = new LinkedList<Class<?>>();
-        superClasses.add(subclass);
-        Class<?> superclass = subclass.getSuperclass();
-        while (superclass != null && superclass != Object.class) {
-            superClasses.add(superclass);
-            subclass = superclass;
-            superclass = subclass.getSuperclass();
-        }
-        return superClasses;
-    }
-
     public static OOPTestSummary runClass(Class<?> testClass) {
-        return runClass(testClass, null);
+        return runClass(testClass, "");
     }
 
 }

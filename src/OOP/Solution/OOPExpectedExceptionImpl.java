@@ -64,10 +64,10 @@ public class OOPExpectedExceptionImpl implements OOPExpectedException {
         if (!this.exp.isAssignableFrom(eClass)) {
             return false;
         }
-        AtomicBoolean contained = new AtomicBoolean(false);
+        AtomicBoolean contained = new AtomicBoolean(true);
         for(String msg: this.subMsgs) {
             contained.set(
-                contained.get() || (e.getMessage() != null && msg.contains(e.getMessage())));
+                contained.get() && (e.getMessage() != null && e.getMessage().contains(msg)));
         }
         return contained.get();
     }
